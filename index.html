@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kora - Costos</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+--primary:#2F5245;--light:#4A7A6A;--bg:#F4F7F6;--white:#fff;--text:#2c3e50;--muted:#95a5a6;--danger:#e74c3c;--radius:12px}
+*{box-sizing:border-box}
+body{font-family:Poppins,sans-serif;margin:0;background:var(--bg);color:var(--text)}
+header{background:var(--white);padding:20px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+header h1{margin:0;color:var(--primary)}
+header p{margin:5px 0 0;color:var(--light);font-size:.9rem}
+
+.container{max-width:900px;margin:auto;padding:15px}
+
+.card{background:var(--white);border-radius:var(--radius);padding:20px;margin-bottom:15px;box-shadow:0 4px 15px rgba(0,0,0,.08)}
+.card.click{cursor:pointer;transition:.2s}
+.card.click:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.12)}
+
+label{font-size:.75rem;font-weight:600;color:var(--muted)}
+input,select{width:100%;padding:12px;border:2px solid #eee;border-radius:8px;margin-top:5px}
+input:focus,select:focus{outline:none;border-color:var(--light)}
+
+button.primary{background:var(--light);color:#fff;border:none;padding:12px;border-radius:8px;font-weight:600;width:100%;margin-top:15px}
+button.primary:hover{background:var(--primary)}
+
+button.back{background:none;border:none;color:var(--muted);font-weight:600;margin-bottom:10px}
+
+button.delete{background:transparent;border:2px solid #eee;color:var(--muted);padding:5px 10px;border-radius:6px}
+button.delete:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
+
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{padding:10px;border-bottom:1px solid #eee;font-size:.9rem}
+th{color:var(--muted);text-align:left}
+
+.price{font-size:1.7rem;font-weight:700;color:var(--primary);text-align:right;margin-top:15px}
+
+.section-title{margin:20px 0 10px;font-size:1.1rem;color:var(--primary)}
+
+@media(max-width:600px){
+.container{padding:10px}
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>Kora</h1>
+<p>Cocina Antiinflamatoria • Sistema de Costos</p>
+</header>
+
+<div class="container">
+
+<!-- MENU PRINCIPAL -->
+<div id="mainMenu">
+
+<h3 class="section-title">📦 Mis Insumos</h3>
+<div id="previewIngredients"></div>
+<button class="primary" onclick="openIngredients()">Administrar Insumos</button>
+
+<h3 class="section-title">📖 Mis Recetas</h3>
+<div id="previewRecipes"></div>
+<button class="primary" onclick="openRecipes()">Administrar Recetas</button>
+
+</div>
+
+<!-- INSUMOS -->
+<div id="ingredients" style="display:none">
+<button class="back" onclick="goHome()">← Menú principal</button>
+
+<div class="card">
+<h3>Nuevo Insumo</h3>
+<label>Nombre</label>
+<input id="ingName">
+<label>Costo ($)</label>
+<input type="number" id="ingCost">
+<label>Cantidad</label>
+<input type="number" id="ingQty">
+<label>Unidad</label>
+<select id="ingUnit">
+<option value="g">g</option>
+<option value="kg">kg</option>
+<option value="ml">ml</option>
+<option value="l">l</option>
+<option value="u">u</option>
+</select>
+<button class="primary" onclick="addIngredient()">Guardar</button>
+</div>
+
+<div class="card">
+<h3>Todos los Insumos</h3>
+<table>
+<thead><tr><th>Nombre</th><th>$ / Unidad</th><th></th></tr></thead>
+<tbody id="ingTable"></tbody>
+</table>
+</div>
+</div>
+
+<!-- RECETAS -->
+<div id="recipes" style="display:none">
+<button class="back" onclick="goHome()">← Menú principal</button>
+
+<div id="recipeList">
+<div class="card">
+<h3>Nueva Receta</h3>
+<input id="newRecipeName" placeholder="Nombre">
+<button class="primary" onclick="createRecipe()">Crear</button>
+</div>
+<div id="recipeCards"></div>
+</div>
+
+<div id="recipeDetail" style="display:none">
+<button class="back" onclick="backToRecipes()">← Volver a recetas</button>
+
+<div class="card">
+<h3 id="recipeTitle"></h3>
+
+<label>Insumo</label>
+<select id="selIng"></select>
+<label>Cantidad</label>
+<input type="number" id="ingAmount">
+<button class="primary" onclick="addToRecipe()">Agregar</button>
+
+<table>
+<thead><tr><th>Insumo</th><th>Cant</th><th>$</th><th></th></tr></thead>
+<tbody id="recipeTable"></tbody>
+</table>
+</div>
+
+<div class="card">
+<h3>Precio</h3>
+<label>Costo Base</label>
+<input id="baseCost" readonly>
+<label>Margen %</label>
+<input type="number" id="margin" oninput="calcFinal()">
+<label>Costos fijos</label>
+<input type="number" id="fixed" oninput="calcFinal()">
+<div class="price" id="finalPrice">$0</div>
+<button class="primary" onclick="saveRecipe()">Guardar Receta</button>
+</div>
+
+<button class="delete" style="width:100%" onclick="deleteRecipe()">Eliminar receta</button>
+</div>
+</div>
+
+</div>
+
+<script>
+let data={ingredients:[],recipes:[]};
+let current=null;
+
+window.onload=()=>{
+const s=localStorage.getItem('koraMobile');
+if(s) data=JSON.parse(s);
+renderHome();
+}
+
+function save(){localStorage.setItem('koraMobile',JSON.stringify(data))}
+
+/* NAVEGACION */
+function hideAll(){mainMenu.style.display=ingredients.style.display=recipes.style.display='none'}
+
+function goHome(){hideAll();mainMenu.style.display='block';renderHome()}
+
+function openIngredients(){hideAll();ingredients.style.display='block';renderIng()}
+
+function openRecipes(){hideAll();recipes.style.display='block';renderRecipes()}
+
+/* HOME */
+function renderHome(){
+renderPreviewIngredients();
+renderPreviewRecipes();
+}
+
+function renderPreviewIngredients(){
+previewIngredients.innerHTML='';
+if(data.ingredients.length==0){
+previewIngredients.innerHTML='<p style="color:gray">Sin insumos cargados</p>';
+return;
+}
+
+data.ingredients.slice(0,5).forEach(i=>{
+let d=document.createElement('div');
+d.className='card click';
+d.innerHTML=`<b>${i.n}</b><p>$${i.cpu.toFixed(2)} / unidad</p>`;
+d.onclick=()=>openIngredients();
+previewIngredients.appendChild(d);
+});
+}
+
+function renderPreviewRecipes(){
+previewRecipes.innerHTML='';
+if(data.recipes.length==0){
+previewRecipes.innerHTML='<p style="color:gray">Sin recetas creadas</p>';
+return;
+}
+
+data.recipes.slice(0,5).forEach(r=>{
+let cost=0;
+r.items.forEach(it=>{
+let i=data.ingredients.find(x=>x.id==it.id);
+if(i) cost+=i.cpu*it.a});
+
+let d=document.createElement('div');
+d.className='card click';
+d.innerHTML=`<b>${r.n}</b><p>Costo: $${cost.toFixed(2)}</p>`;
+d.onclick=()=>{openRecipes();setTimeout(()=>openRecipe(r.id),100)};
+previewRecipes.appendChild(d);
+});
+}
+
+/* INGREDIENTES */
+function addIngredient(){
+let n=ingName.value,c=+ingCost.value,q=+ingQty.value,u=ingUnit.value;
+if(!n||!c||!q) return alert('Completa todo');
+let m=(u=='kg'||u=='l')?1000:1;
+let cpu=c/(q*m);
+data.ingredients.push({id:Date.now(),n,cpu});
+save();renderIng();renderHome();
+ingName.value=ingCost.value=ingQty.value='';
+}
+
+function renderIng(){
+ingTable.innerHTML='';
+data.ingredients.forEach(i=>{
+ingTable.innerHTML+=`<tr><td>${i.n}</td><td>$${i.cpu.toFixed(2)}</td><td><button class='delete' onclick='delIng(${i.id})'>X</button></td></tr>`
+})}
+
+function delIng(id){data.ingredients=data.ingredients.filter(i=>i.id!=id);save();renderIng();renderHome()}
+
+/* RECETAS */
+function createRecipe(){
+if(!newRecipeName.value) return;
+let r={id:Date.now(),n:newRecipeName.value,items:[],m:50,f:0};
+data.recipes.push(r);save();newRecipeName.value='';renderRecipes();renderHome();openRecipe(r.id)
+}
+
+function renderRecipes(){
+recipeCards.innerHTML='';
+data.recipes.forEach(r=>{
+let cost=0;
+r.items.forEach(it=>{
+let i=data.ingredients.find(x=>x.id==it.id);
+if(i) cost+=i.cpu*it.a});
+
+let d=document.createElement('div');
+d.className='card click';
+d.innerHTML=`<b>${r.n}</b><p>Costo: $${cost.toFixed(2)}</p>`;
+d.onclick=()=>openRecipe(r.id);
+recipeCards.appendChild(d)
+})}
+
+function openRecipe(id){
+current=id;
+recipeList.style.display='none';
+recipeDetail.style.display='block';
+let r=data.recipes.find(x=>x.id==id);
+recipeTitle.innerText=r.n;
+margin.value=r.m;fixed.value=r.f;
+renderSel();renderRecipe()
+}
+
+function backToRecipes(){
+recipeDetail.style.display='none';
+recipeList.style.display='block';
+renderRecipes();renderHome()
+}
+
+function renderSel(){
+selIng.innerHTML='';
+data.ingredients.forEach(i=>{
+selIng.innerHTML+=`<option value='${i.id}'>${i.n}</option>`
+})}
+
+function addToRecipe(){
+let id=+selIng.value,a=+ingAmount.value;
+if(!id||!a) return;
+let r=data.recipes.find(x=>x.id==current);
+r.items.push({id,a});save();renderRecipe();renderHome();ingAmount.value=''
+}
+
+function renderRecipe(){
+let r=data.recipes.find(x=>x.id==current);
+let t=0;recipeTable.innerHTML='';
+r.items.forEach((it,i)=>{
+let ing=data.ingredients.find(x=>x.id==it.id);
+let c=ing?ing.cpu*it.a:0;t+=c;
+recipeTable.innerHTML+=`<tr><td>${ing?ing.n:'-'}</td><td>${it.a}</td><td>$${c.toFixed(2)}</td><td><button class='delete' onclick='delItem(${i})'>X</button></td></tr>`
+});
+baseCost.value=t.toFixed(2);calcFinal()
+}
+
+function delItem(i){let r=data.recipes.find(x=>x.id==current);r.items.splice(i,1);save();renderRecipe();renderHome()}
+
+function calcFinal(){
+let b=+baseCost.value||0,m=+margin.value||0,f=+fixed.value||0;
+let r=data.recipes.find(x=>x.id==current);
+r.m=m;r.f=f;save();
+finalPrice.innerText='$'+(b+b*m/100+f).toFixed(2)
+}
+
+function saveRecipe(){
+alert('Receta guardada ✔');
+renderHome();
+backToRecipes()
+}
+
+function deleteRecipe(){
+if(!confirm('Eliminar?'))return;
+data.recipes=data.recipes.filter(r=>r.id!=current);
+save();renderHome();backToRecipes()
+}
+</script>
+</body>
+</html>
