@@ -3,315 +3,581 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kora - Costos</title>
+<title>Kora - Sistema de Costos</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
---primary:#2F5245;--light:#4A7A6A;--bg:#F4F7F6;--white:#fff;--text:#2c3e50;--muted:#95a5a6;--danger:#e74c3c;--radius:12px}
-*{box-sizing:border-box}
-body{font-family:Poppins,sans-serif;margin:0;background:var(--bg);color:var(--text)}
-header{background:var(--white);padding:20px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.05)}
-header h1{margin:0;color:var(--primary)}
-header p{margin:5px 0 0;color:var(--light);font-size:.9rem}
+:root {
+    --primary: #2F5245;
+    --light: #4A7A6A;
+    --bg: #F4F7F6;
+    --white: #fff;
+    --text: #2c3e50;
+    --muted: #7f8c8d;
+    --danger: #e74c3c;
+    --success: #27ae60;
+    --radius: 12px;
+}
+* { box-sizing: border-box; }
+body { font-family: 'Poppins', sans-serif; margin: 0; background: var(--bg); color: var(--text); padding-bottom: 40px; }
 
-.container{max-width:900px;margin:auto;padding:15px}
+header { background: var(--white); padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,.05); position: sticky; top: 0; z-index: 100;}
+header h1 { margin: 0; color: var(--primary); }
+header p { margin: 5px 0 0; color: var(--light); font-size: .9rem; }
 
-.card{background:var(--white);border-radius:var(--radius);padding:20px;margin-bottom:15px;box-shadow:0 4px 15px rgba(0,0,0,.08)}
-.card.click{cursor:pointer;transition:.2s}
-.card.click:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.container { max-width: 900px; margin: auto; padding: 20px 15px; }
 
-label{font-size:.75rem;font-weight:600;color:var(--muted)}
-input,select{width:100%;padding:12px;border:2px solid #eee;border-radius:8px;margin-top:5px}
-input:focus,select:focus{outline:none;border-color:var(--light)}
+.card { background: var(--white); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,.05); }
+.card.click { cursor: pointer; transition: .2s; border: 1px solid transparent; }
+.card.click:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.1); border-color: var(--light); }
 
-button.primary{background:var(--light);color:#fff;border:none;padding:12px;border-radius:8px;font-weight:600;width:100%;margin-top:15px}
-button.primary:hover{background:var(--primary)}
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.flex-gap { display: flex; gap: 10px; align-items: flex-end; }
 
-button.back{background:none;border:none;color:var(--muted);font-weight:600;margin-bottom:10px}
+label { font-size: .8rem; font-weight: 600; color: var(--muted); display: block; margin-top: 10px; }
+input, select { width: 100%; padding: 10px 12px; border: 2px solid #e1e8e5; border-radius: 8px; margin-top: 5px; font-family: inherit; font-size: 0.95rem; }
+input:focus, select:focus { outline: none; border-color: var(--light); }
 
-button.delete{background:transparent;border:2px solid #eee;color:var(--muted);padding:5px 10px;border-radius:6px}
-button.delete:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
+button { cursor: pointer; font-family: inherit; transition: .2s; }
+button.primary { background: var(--primary); color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 600; width: 100%; margin-top: 15px; }
+button.primary:hover { background: #1f3a31; }
+button.secondary { background: #e1e8e5; color: var(--primary); border: none; padding: 12px; border-radius: 8px; font-weight: 600; width: 100%; margin-top: 15px; }
+button.secondary:hover { background: #d0d9d5; }
 
-table{width:100%;border-collapse:collapse;margin-top:10px}
-th,td{padding:10px;border-bottom:1px solid #eee;font-size:.9rem}
-th{color:var(--muted);text-align:left}
+button.back { background: none; border: none; color: var(--primary); font-weight: 600; margin-bottom: 15px; padding: 0; display: inline-flex; align-items: center; gap: 5px;}
+button.back:hover { text-decoration: underline; }
 
-.price{font-size:1.7rem;font-weight:700;color:var(--primary);text-align:right;margin-top:15px}
+.btn-icon { background: transparent; border: 1px solid #e1e8e5; border-radius: 6px; padding: 6px 10px; font-size: 1rem; color: var(--muted); }
+.btn-icon:hover { background: var(--bg); color: var(--text); }
+.btn-icon.danger:hover { background: var(--danger); color: white; border-color: var(--danger); }
 
-.section-title{margin:20px 0 10px;font-size:1.1rem;color:var(--primary)}
+table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+th, td { padding: 12px 10px; border-bottom: 1px solid #e1e8e5; font-size: .9rem; text-align: left; }
+th { color: var(--muted); font-weight: 600; }
+td.actions { text-align: right; white-space: nowrap; }
 
-@media(max-width:600px){
-.container{padding:10px}
+.price-breakdown { background: var(--bg); padding: 15px; border-radius: 8px; margin-top: 15px; }
+.price-breakdown p { display: flex; justify-content: space-between; margin: 5px 0; font-size: 0.9rem; }
+.price-final { font-size: 1.8rem; font-weight: 700; color: var(--primary); text-align: right; margin-top: 15px; border-top: 2px solid #e1e8e5; padding-top: 15px; }
+
+.section-title { margin: 25px 0 15px; font-size: 1.2rem; color: var(--primary); border-bottom: 2px solid var(--light); padding-bottom: 5px; display: inline-block;}
+
+.empty-state { text-align: center; padding: 20px; color: var(--muted); font-style: italic; }
+
+@media(max-width: 600px){
+    th, td { padding: 10px 5px; font-size: 0.85rem; }
+    .flex-gap { flex-direction: column; align-items: stretch; }
 }
 </style>
 </head>
 <body>
 
 <header>
-<h1>Kora</h1>
-<p>Cocina Antiinflamatoria • Sistema de Costos</p>
+    <h1>Kora</h1>
+    <p>Cocina Antiinflamatoria • Sistema de Costos</p>
 </header>
 
 <div class="container">
 
-<!-- MENU PRINCIPAL -->
-<div id="mainMenu">
+    <div id="mainMenu">
+        <h3 class="section-title">📦 Resumen de Insumos</h3>
+        <div id="previewIngredients"></div>
+        <button class="primary" onclick="openIngredients()">Administrar Insumos</button>
 
-<h3 class="section-title">📦 Mis Insumos</h3>
-<div id="previewIngredients"></div>
-<button class="primary" onclick="openIngredients()">Administrar Insumos</button>
+        <h3 class="section-title">📖 Resumen de Recetas</h3>
+        <div id="previewRecipes"></div>
+        <button class="primary" onclick="openRecipes()">Administrar Recetas</button>
+    </div>
 
-<h3 class="section-title">📖 Mis Recetas</h3>
-<div id="previewRecipes"></div>
-<button class="primary" onclick="openRecipes()">Administrar Recetas</button>
+    <div id="ingredients" style="display:none">
+        <button class="back" onclick="goHome()">← Volver al inicio</button>
+        
+        <div class="card" id="ingFormCard">
+            <h3 id="ingFormTitle">Agregar Nuevo Insumo</h3>
+            <div class="flex-gap">
+                <div style="flex: 2;">
+                    <label>Nombre del insumo</label>
+                    <input id="ingName" placeholder="Ej: Harina de Almendras">
+                </div>
+                <div style="flex: 1;">
+                    <label>Costo Total ($)</label>
+                    <input type="number" id="ingCost" placeholder="0.00">
+                </div>
+            </div>
+            <div class="flex-gap">
+                <div style="flex: 1;">
+                    <label>Cantidad que compraste</label>
+                    <input type="number" id="ingQty" placeholder="Ej: 1">
+                </div>
+                <div style="flex: 1;">
+                    <label>Unidad</label>
+                    <select id="ingUnit">
+                        <option value="kg">Kilogramos (kg)</option>
+                        <option value="g">Gramos (g)</option>
+                        <option value="l">Litros (l)</option>
+                        <option value="ml">Mililitros (ml)</option>
+                        <option value="u">Unidades (u)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex-gap">
+                <button class="primary" onclick="saveIngredient()" id="btnSaveIng">Guardar Insumo</button>
+                <button class="secondary" onclick="cancelEditIng()" id="btnCancelIng" style="display:none;">Cancelar</button>
+            </div>
+        </div>
 
-</div>
+        <div class="card">
+            <h3>Mi Lista de Insumos</h3>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead><tr><th>Nombre</th><th>Costo Base</th><th>Acciones</th></tr></thead>
+                    <tbody id="ingTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-<!-- INSUMOS -->
-<div id="ingredients" style="display:none">
-<button class="back" onclick="goHome()">← Menú principal</button>
+    <div id="recipes" style="display:none">
+        <button class="back" onclick="goHome()">← Volver al inicio</button>
 
-<div class="card">
-<h3>Nuevo Insumo</h3>
-<label>Nombre</label>
-<input id="ingName">
-<label>Costo ($)</label>
-<input type="number" id="ingCost">
-<label>Cantidad</label>
-<input type="number" id="ingQty">
-<label>Unidad</label>
-<select id="ingUnit">
-<option value="g">g</option>
-<option value="kg">kg</option>
-<option value="ml">ml</option>
-<option value="l">l</option>
-<option value="u">u</option>
-</select>
-<button class="primary" onclick="addIngredient()">Guardar</button>
-</div>
+        <div id="recipeList">
+            <div class="card">
+                <h3>Crear Nueva Receta</h3>
+                <div class="flex-gap">
+                    <input id="newRecipeName" placeholder="Nombre de la receta (Ej: Pan Keto)">
+                    <button class="primary" style="margin-top:0; width:auto;" onclick="createRecipe()">Crear</button>
+                </div>
+            </div>
+            <h3 class="section-title" style="margin-top: 10px;">Mis Recetas</h3>
+            <div id="recipeCards"></div>
+        </div>
 
-<div class="card">
-<h3>Todos los Insumos</h3>
-<table>
-<thead><tr><th>Nombre</th><th>$ / Unidad</th><th></th></tr></thead>
-<tbody id="ingTable"></tbody>
-</table>
-</div>
-</div>
+        <div id="recipeDetail" style="display:none">
+            <button class="back" onclick="backToRecipes()">← Volver a mis recetas</button>
 
-<!-- RECETAS -->
-<div id="recipes" style="display:none">
-<button class="back" onclick="goHome()">← Menú principal</button>
+            <div class="card">
+                <div class="flex-between">
+                    <h2 id="recipeTitle" style="margin:0; color:var(--primary);"></h2>
+                    <button class="btn-icon" onclick="renameRecipe()" title="Renombrar receta">✏️</button>
+                </div>
+                <hr style="border:0; border-top:1px solid #eee; margin: 15px 0;">
 
-<div id="recipeList">
-<div class="card">
-<h3>Nueva Receta</h3>
-<input id="newRecipeName" placeholder="Nombre">
-<button class="primary" onclick="createRecipe()">Crear</button>
-</div>
-<div id="recipeCards"></div>
-</div>
+                <h3 style="margin-top:0; font-size:1rem;">Agregar Ingrediente</h3>
+                <div class="flex-gap">
+                    <div style="flex: 2;">
+                        <label>Seleccionar Insumo</label>
+                        <select id="selIng" onchange="updateUnitHint()"></select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label id="lblAmount">Cantidad</label>
+                        <input type="number" id="ingAmount" placeholder="0">
+                    </div>
+                    <div style="flex: 1; display:flex; align-items:flex-end;">
+                        <button class="primary" style="margin-top:0;" onclick="addToRecipe()">Agregar</button>
+                    </div>
+                </div>
 
-<div id="recipeDetail" style="display:none">
-<button class="back" onclick="backToRecipes()">← Volver a recetas</button>
+                <div style="overflow-x: auto; margin-top: 20px;">
+                    <table>
+                        <thead><tr><th>Ingrediente</th><th>Cant.</th><th>Costo</th><th></th></tr></thead>
+                        <tbody id="recipeTable"></tbody>
+                    </table>
+                </div>
+            </div>
 
-<div class="card">
-<h3 id="recipeTitle"></h3>
+            <div class="card">
+                <h3>Análisis de Costos y Precio</h3>
+                
+                <div class="flex-gap">
+                    <div style="flex: 1;">
+                        <label>Margen de Ganancia (%)</label>
+                        <input type="number" id="margin" oninput="calcFinal()">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Costos Fijos Extra ($)</label>
+                        <input type="number" id="fixed" oninput="calcFinal()" placeholder="Luz, gas, envase...">
+                    </div>
+                </div>
 
-<label>Insumo</label>
-<select id="selIng"></select>
-<label>Cantidad</label>
-<input type="number" id="ingAmount">
-<button class="primary" onclick="addToRecipe()">Agregar</button>
+                <div class="price-breakdown">
+                    <p>Costo de Ingredientes: <strong id="lblBaseCost">$0.00</strong></p>
+                    <p>Costos Fijos: <strong id="lblFixedCost">$0.00</strong></p>
+                    <p>Ganancia Esperada: <strong id="lblProfit">$0.00</strong></p>
+                    <div class="price-final" id="finalPrice">$0.00</div>
+                </div>
+            </div>
 
-<table>
-<thead><tr><th>Insumo</th><th>Cant</th><th>$</th><th></th></tr></thead>
-<tbody id="recipeTable"></tbody>
-</table>
-</div>
-
-<div class="card">
-<h3>Precio</h3>
-<label>Costo Base</label>
-<input id="baseCost" readonly>
-<label>Margen %</label>
-<input type="number" id="margin" oninput="calcFinal()">
-<label>Costos fijos</label>
-<input type="number" id="fixed" oninput="calcFinal()">
-<div class="price" id="finalPrice">$0</div>
-<button class="primary" onclick="saveRecipe()">Guardar Receta</button>
-</div>
-
-<button class="delete" style="width:100%" onclick="deleteRecipe()">Eliminar receta</button>
-</div>
-</div>
+            <button class="btn-icon danger" style="width:100%; padding:15px; font-weight:bold;" onclick="deleteRecipe()">🗑️ Eliminar esta receta</button>
+        </div>
+    </div>
 
 </div>
 
 <script>
-let data={ingredients:[],recipes:[]};
-let current=null;
+// Estructura de datos
+let data = { ingredients: [], recipes: [] };
+let currentRecipeId = null;
+let currentEditIngId = null;
 
-window.onload=()=>{
-const s=localStorage.getItem('koraMobile');
-if(s) data=JSON.parse(s);
-renderHome();
+// Inicialización
+window.onload = () => {
+    const s = localStorage.getItem('koraMobileData'); // Cambié la key para no pisar tu versión anterior si quieres comparar
+    if(s) data = JSON.parse(s);
+    renderHome();
 }
 
-function save(){localStorage.setItem('koraMobile',JSON.stringify(data))}
+function save() { 
+    localStorage.setItem('koraMobileData', JSON.stringify(data)); 
+}
 
-/* NAVEGACION */
-function hideAll(){mainMenu.style.display=ingredients.style.display=recipes.style.display='none'}
+/* NAVEGACIÓN */
+function hideAll() { 
+    document.getElementById('mainMenu').style.display = 'none';
+    document.getElementById('ingredients').style.display = 'none';
+    document.getElementById('recipes').style.display = 'none';
+}
 
-function goHome(){hideAll();mainMenu.style.display='block';renderHome()}
+function goHome() { 
+    hideAll(); 
+    document.getElementById('mainMenu').style.display = 'block'; 
+    renderHome(); 
+}
 
-function openIngredients(){hideAll();ingredients.style.display='block';renderIng()}
+function openIngredients() { 
+    hideAll(); 
+    document.getElementById('ingredients').style.display = 'block'; 
+    cancelEditIng(); // Resetea formulario
+    renderIng(); 
+}
 
-function openRecipes(){hideAll();recipes.style.display='block';renderRecipes()}
+function openRecipes() { 
+    hideAll(); 
+    document.getElementById('recipes').style.display = 'block'; 
+    document.getElementById('recipeList').style.display = 'block';
+    document.getElementById('recipeDetail').style.display = 'none';
+    renderRecipes(); 
+}
 
 /* HOME */
-function renderHome(){
-renderPreviewIngredients();
-renderPreviewRecipes();
+function renderHome() {
+    renderPreviewIngredients();
+    renderPreviewRecipes();
 }
 
-function renderPreviewIngredients(){
-previewIngredients.innerHTML='';
-if(data.ingredients.length==0){
-previewIngredients.innerHTML='<p style="color:gray">Sin insumos cargados</p>';
-return;
+function renderPreviewIngredients() {
+    const div = document.getElementById('previewIngredients');
+    div.innerHTML = '';
+    if(data.ingredients.length === 0){
+        div.innerHTML = '<div class="empty-state">No hay insumos cargados.</div>';
+        return;
+    }
+    data.ingredients.slice(0, 3).forEach(i => {
+        let d = document.createElement('div');
+        d.className = 'card click flex-between';
+        d.style.marginBottom = '10px';
+        d.innerHTML = `<div><strong>${i.n}</strong></div> <div>$${i.cpu.toFixed(2)} / ${i.baseUnit}</div>`;
+        d.onclick = () => openIngredients();
+        div.appendChild(d);
+    });
 }
 
-data.ingredients.slice(0,5).forEach(i=>{
-let d=document.createElement('div');
-d.className='card click';
-d.innerHTML=`<b>${i.n}</b><p>$${i.cpu.toFixed(2)} / unidad</p>`;
-d.onclick=()=>openIngredients();
-previewIngredients.appendChild(d);
-});
+function renderPreviewRecipes() {
+    const div = document.getElementById('previewRecipes');
+    div.innerHTML = '';
+    if(data.recipes.length === 0){
+        div.innerHTML = '<div class="empty-state">No hay recetas creadas.</div>';
+        return;
+    }
+    data.recipes.slice(0, 3).forEach(r => {
+        let cost = calculateRecipeBaseCost(r);
+        let d = document.createElement('div');
+        d.className = 'card click flex-between';
+        d.style.marginBottom = '10px';
+        d.innerHTML = `<div><strong>${r.n}</strong></div> <div>Costo: $${cost.toFixed(2)}</div>`;
+        d.onclick = () => { openRecipes(); setTimeout(() => openRecipe(r.id), 50); };
+        div.appendChild(d);
+    });
 }
 
-function renderPreviewRecipes(){
-previewRecipes.innerHTML='';
-if(data.recipes.length==0){
-previewRecipes.innerHTML='<p style="color:gray">Sin recetas creadas</p>';
-return;
+function calculateRecipeBaseCost(recipe) {
+    let cost = 0;
+    recipe.items.forEach(it => {
+        let ing = data.ingredients.find(x => x.id == it.id);
+        if(ing) cost += ing.cpu * it.a;
+    });
+    return cost;
 }
 
-data.recipes.slice(0,5).forEach(r=>{
-let cost=0;
-r.items.forEach(it=>{
-let i=data.ingredients.find(x=>x.id==it.id);
-if(i) cost+=i.cpu*it.a});
+/* INSUMOS */
+function saveIngredient() {
+    let n = document.getElementById('ingName').value.trim();
+    let c = +document.getElementById('ingCost').value;
+    let q = +document.getElementById('ingQty').value;
+    let u = document.getElementById('ingUnit').value;
 
-let d=document.createElement('div');
-d.className='card click';
-d.innerHTML=`<b>${r.n}</b><p>Costo: $${cost.toFixed(2)}</p>`;
-d.onclick=()=>{openRecipes();setTimeout(()=>openRecipe(r.id),100)};
-previewRecipes.appendChild(d);
-});
+    if(!n || !c || !q) return alert('Por favor, completa todos los campos del insumo.');
+
+    // Calcular costo por unidad base (g, ml, u)
+    let m = (u === 'kg' || u === 'l') ? 1000 : 1;
+    let baseUnit = (u === 'kg') ? 'g' : (u === 'l') ? 'ml' : u;
+    let cpu = c / (q * m);
+
+    if (currentEditIngId) {
+        // Actualizar existente
+        let ing = data.ingredients.find(i => i.id === currentEditIngId);
+        ing.n = n; ing.origCost = c; ing.origQty = q; ing.origUnit = u; 
+        ing.baseUnit = baseUnit; ing.cpu = cpu;
+    } else {
+        // Crear nuevo
+        data.ingredients.push({
+            id: Date.now(), n, origCost: c, origQty: q, origUnit: u, baseUnit, cpu
+        });
+    }
+
+    save(); renderIng(); renderHome(); cancelEditIng();
 }
 
-/* INGREDIENTES */
-function addIngredient(){
-let n=ingName.value,c=+ingCost.value,q=+ingQty.value,u=ingUnit.value;
-if(!n||!c||!q) return alert('Completa todo');
-let m=(u=='kg'||u=='l')?1000:1;
-let cpu=c/(q*m);
-data.ingredients.push({id:Date.now(),n,cpu});
-save();renderIng();renderHome();
-ingName.value=ingCost.value=ingQty.value='';
+function editIng(id) {
+    let ing = data.ingredients.find(i => i.id === id);
+    if(!ing) return;
+    
+    currentEditIngId = id;
+    document.getElementById('ingFormTitle').innerText = 'Editar Insumo';
+    document.getElementById('ingName').value = ing.n;
+    document.getElementById('ingCost').value = ing.origCost || '';
+    document.getElementById('ingQty').value = ing.origQty || '';
+    document.getElementById('ingUnit').value = ing.origUnit || 'g';
+    
+    document.getElementById('btnSaveIng').innerText = 'Actualizar Cambios';
+    document.getElementById('btnCancelIng').style.display = 'block';
+    
+    // Scroll al formulario
+    document.getElementById('ingFormCard').scrollIntoView({behavior: 'smooth'});
 }
 
-function renderIng(){
-ingTable.innerHTML='';
-data.ingredients.forEach(i=>{
-ingTable.innerHTML+=`<tr><td>${i.n}</td><td>$${i.cpu.toFixed(2)}</td><td><button class='delete' onclick='delIng(${i.id})'>X</button></td></tr>`
-})}
+function cancelEditIng() {
+    currentEditIngId = null;
+    document.getElementById('ingFormTitle').innerText = 'Agregar Nuevo Insumo';
+    document.getElementById('ingName').value = '';
+    document.getElementById('ingCost').value = '';
+    document.getElementById('ingQty').value = '';
+    document.getElementById('ingUnit').value = 'kg'; // default
+    document.getElementById('btnSaveIng').innerText = 'Guardar Insumo';
+    document.getElementById('btnCancelIng').style.display = 'none';
+}
 
-function delIng(id){data.ingredients=data.ingredients.filter(i=>i.id!=id);save();renderIng();renderHome()}
+function delIng(id) {
+    if(!confirm('¿Seguro que deseas eliminar este insumo? Afectará a las recetas que lo usen.')) return;
+    data.ingredients = data.ingredients.filter(i => i.id != id);
+    // Limpiar insumo de las recetas
+    data.recipes.forEach(r => {
+        r.items = r.items.filter(it => it.id != id);
+    });
+    save(); renderIng(); renderHome(); cancelEditIng();
+}
+
+function renderIng() {
+    const tbody = document.getElementById('ingTable');
+    tbody.innerHTML = '';
+    
+    if(data.ingredients.length === 0){
+        tbody.innerHTML = '<tr><td colspan="3" class="empty-state">No hay insumos. Agrega uno arriba.</td></tr>';
+        return;
+    }
+
+    data.ingredients.forEach(i => {
+        tbody.innerHTML += `
+            <tr>
+                <td><strong>${i.n}</strong></td>
+                <td>$${i.cpu.toFixed(2)} <small style="color:var(--muted)">/ ${i.baseUnit}</small></td>
+                <td class="actions">
+                    <button class="btn-icon" onclick="editIng(${i.id})" title="Editar">✏️</button>
+                    <button class="btn-icon danger" onclick="delIng(${i.id})" title="Eliminar">🗑️</button>
+                </td>
+            </tr>`;
+    });
+}
 
 /* RECETAS */
-function createRecipe(){
-if(!newRecipeName.value) return;
-let r={id:Date.now(),n:newRecipeName.value,items:[],m:50,f:0};
-data.recipes.push(r);save();newRecipeName.value='';renderRecipes();renderHome();openRecipe(r.id)
+function createRecipe() {
+    const nameInput = document.getElementById('newRecipeName');
+    let n = nameInput.value.trim();
+    if(!n) return alert('Ponle un nombre a la receta.');
+    
+    let r = { id: Date.now(), n, items: [], m: 50, f: 0 };
+    data.recipes.push(r); 
+    save(); 
+    nameInput.value = ''; 
+    openRecipe(r.id);
 }
 
-function renderRecipes(){
-recipeCards.innerHTML='';
-data.recipes.forEach(r=>{
-let cost=0;
-r.items.forEach(it=>{
-let i=data.ingredients.find(x=>x.id==it.id);
-if(i) cost+=i.cpu*it.a});
+function renderRecipes() {
+    const div = document.getElementById('recipeCards');
+    div.innerHTML = '';
+    
+    if(data.recipes.length === 0){
+        div.innerHTML = '<div class="empty-state">No tienes recetas. Crea la primera arriba.</div>';
+        return;
+    }
 
-let d=document.createElement('div');
-d.className='card click';
-d.innerHTML=`<b>${r.n}</b><p>Costo: $${cost.toFixed(2)}</p>`;
-d.onclick=()=>openRecipe(r.id);
-recipeCards.appendChild(d)
-})}
+    data.recipes.forEach(r => {
+        let cost = calculateRecipeBaseCost(r);
+        let final = cost + (cost * (r.m/100)) + r.f;
 
-function openRecipe(id){
-current=id;
-recipeList.style.display='none';
-recipeDetail.style.display='block';
-let r=data.recipes.find(x=>x.id==id);
-recipeTitle.innerText=r.n;
-margin.value=r.m;fixed.value=r.f;
-renderSel();renderRecipe()
+        let d = document.createElement('div');
+        d.className = 'card click';
+        d.innerHTML = `
+            <div class="flex-between">
+                <strong style="font-size:1.1rem; color:var(--primary);">${r.n}</strong>
+                <span style="font-weight:bold; color:var(--light);">PV: $${final.toFixed(2)}</span>
+            </div>
+            <p style="margin:5px 0 0; font-size:0.85rem; color:var(--muted);">Costo Ingredientes: $${cost.toFixed(2)} | Insumos: ${r.items.length}</p>
+        `;
+        d.onclick = () => openRecipe(r.id);
+        div.appendChild(d);
+    });
 }
 
-function backToRecipes(){
-recipeDetail.style.display='none';
-recipeList.style.display='block';
-renderRecipes();renderHome()
+function openRecipe(id) {
+    currentRecipeId = id;
+    document.getElementById('recipeList').style.display = 'none';
+    document.getElementById('recipeDetail').style.display = 'block';
+    
+    let r = data.recipes.find(x => x.id == id);
+    document.getElementById('recipeTitle').innerText = r.n;
+    document.getElementById('margin').value = r.m;
+    document.getElementById('fixed').value = r.f;
+    
+    renderSelIng(); 
+    renderRecipeItems();
 }
 
-function renderSel(){
-selIng.innerHTML='';
-data.ingredients.forEach(i=>{
-selIng.innerHTML+=`<option value='${i.id}'>${i.n}</option>`
-})}
-
-function addToRecipe(){
-let id=+selIng.value,a=+ingAmount.value;
-if(!id||!a) return;
-let r=data.recipes.find(x=>x.id==current);
-r.items.push({id,a});save();renderRecipe();renderHome();ingAmount.value=''
+function renameRecipe() {
+    let r = data.recipes.find(x => x.id == currentRecipeId);
+    let newName = prompt("Nuevo nombre para la receta:", r.n);
+    if(newName && newName.trim() !== "") {
+        r.n = newName.trim();
+        document.getElementById('recipeTitle').innerText = r.n;
+        save();
+        renderHome();
+    }
 }
 
-function renderRecipe(){
-let r=data.recipes.find(x=>x.id==current);
-let t=0;recipeTable.innerHTML='';
-r.items.forEach((it,i)=>{
-let ing=data.ingredients.find(x=>x.id==it.id);
-let c=ing?ing.cpu*it.a:0;t+=c;
-recipeTable.innerHTML+=`<tr><td>${ing?ing.n:'-'}</td><td>${it.a}</td><td>$${c.toFixed(2)}</td><td><button class='delete' onclick='delItem(${i})'>X</button></td></tr>`
-});
-baseCost.value=t.toFixed(2);calcFinal()
+function backToRecipes() {
+    currentRecipeId = null;
+    document.getElementById('recipeDetail').style.display = 'none';
+    document.getElementById('recipeList').style.display = 'block';
+    renderRecipes(); 
+    renderHome();
 }
 
-function delItem(i){let r=data.recipes.find(x=>x.id==current);r.items.splice(i,1);save();renderRecipe();renderHome()}
-
-function calcFinal(){
-let b=+baseCost.value||0,m=+margin.value||0,f=+fixed.value||0;
-let r=data.recipes.find(x=>x.id==current);
-r.m=m;r.f=f;save();
-finalPrice.innerText='$'+(b+b*m/100+f).toFixed(2)
+function renderSelIng() {
+    const sel = document.getElementById('selIng');
+    sel.innerHTML = '<option value="">-- Seleccionar --</option>';
+    data.ingredients.forEach(i => {
+        sel.innerHTML += `<option value='${i.id}'>${i.n}</option>`;
+    });
+    updateUnitHint();
 }
 
-function saveRecipe(){
-alert('Receta guardada ✔');
-renderHome();
-backToRecipes()
+function updateUnitHint() {
+    const sel = document.getElementById('selIng');
+    const lbl = document.getElementById('lblAmount');
+    if(!sel.value) {
+        lbl.innerText = "Cantidad";
+        return;
+    }
+    let ing = data.ingredients.find(x => x.id == sel.value);
+    lbl.innerText = `Cantidad (${ing.baseUnit})`;
 }
 
-function deleteRecipe(){
-if(!confirm('Eliminar?'))return;
-data.recipes=data.recipes.filter(r=>r.id!=current);
-save();renderHome();backToRecipes()
+function addToRecipe() {
+    let id = +document.getElementById('selIng').value;
+    let a = +document.getElementById('ingAmount').value;
+    
+    if(!id || !a) return alert('Selecciona un insumo y coloca la cantidad.');
+    
+    let r = data.recipes.find(x => x.id == currentRecipeId);
+    
+    // Verificar si ya existe y sumar cantidad (opcional, pero buena práctica)
+    let existing = r.items.find(x => x.id === id);
+    if(existing) {
+        existing.a += a;
+    } else {
+        r.items.push({id, a});
+    }
+    
+    save(); 
+    renderRecipeItems(); 
+    document.getElementById('ingAmount').value = '';
+    document.getElementById('selIng').value = '';
+    updateUnitHint();
+}
+
+function renderRecipeItems() {
+    let r = data.recipes.find(x => x.id == currentRecipeId);
+    const tbody = document.getElementById('recipeTable');
+    tbody.innerHTML = '';
+    
+    let totalBase = 0;
+    
+    if(r.items.length === 0){
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No hay ingredientes en esta receta.</td></tr>';
+    } else {
+        r.items.forEach((it, i) => {
+            let ing = data.ingredients.find(x => x.id == it.id);
+            if(!ing) return; // Insumo fue borrado
+            
+            let c = ing.cpu * it.a;
+            totalBase += c;
+            
+            tbody.innerHTML += `
+                <tr>
+                    <td>${ing.n}</td>
+                    <td>${it.a} ${ing.baseUnit}</td>
+                    <td>$${c.toFixed(2)}</td>
+                    <td class="actions"><button class="btn-icon danger" onclick="delRecipeItem(${i})" title="Quitar">❌</button></td>
+                </tr>`;
+        });
+    }
+    
+    // Guardar coste base en variable global o dataset si se necesitara, aquí calculamos directo
+    calcFinal(totalBase);
+}
+
+function delRecipeItem(index) {
+    let r = data.recipes.find(x => x.id == currentRecipeId);
+    r.items.splice(index, 1);
+    save(); 
+    renderRecipeItems();
+}
+
+function calcFinal(forcedBase) {
+    let r = data.recipes.find(x => x.id == currentRecipeId);
+    let m = +document.getElementById('margin').value || 0;
+    let f = +document.getElementById('fixed').value || 0;
+    
+    let base = (forcedBase !== undefined) ? forcedBase : calculateRecipeBaseCost(r);
+    
+    // Guardar cambios de margen y fijos
+    r.m = m; 
+    r.f = f; 
+    save();
+    
+    let profit = base * (m / 100);
+    let final = base + profit + f;
+    
+    document.getElementById('lblBaseCost').innerText = '$' + base.toFixed(2);
+    document.getElementById('lblFixedCost').innerText = '$' + f.toFixed(2);
+    document.getElementById('lblProfit').innerText = '$' + profit.toFixed(2);
+    document.getElementById('finalPrice').innerText = 'Precio Sugerido: $' + final.toFixed(2);
+}
+
+function deleteRecipe() {
+    if(!confirm('¿Estás seguro de eliminar esta receta por completo?')) return;
+    data.recipes = data.recipes.filter(r => r.id != currentRecipeId);
+    save(); 
+    renderHome(); 
+    backToRecipes();
 }
 </script>
 </body>
